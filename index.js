@@ -53,7 +53,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'OK' });
+  const healthCheck = {
+    uptime: process.uptime(),
+    message: 'OK',
+    timestamp: Date.now(),
+    memoryUsage: process.memoryUsage(),
+  };
+  try {
+    res.status(200).json(healthCheck);
+  } catch (error) {
+    healthCheck.message = error;
+    res.status(503).json(healthCheck);
+  }
 });
 
 const PORT = process.env.PORT || 5000;
